@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "../components/ui/button";
+import Autocomplete from "react-google-autocomplete";
+
 import {
   Form,
   FormControl,
@@ -63,6 +65,14 @@ export function InputForm() {
             </FormItem>
           )}
         />
+        {/* <Autocomplete
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+          onPlaceSelected={(place) => {
+            console.log(place);
+          }}
+          >
+             */}
+
         <FormField
           control={form.control}
           name="destination"
