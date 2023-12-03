@@ -18,12 +18,14 @@ import {
 } from "../components/ui/form";
 import { Input } from "../components/ui/input";
 import { toast } from "../components/ui/use-toast";
+import axios from "axios";
+import { useState } from "react";
 
 const FormSchema = z.object({
-  starting_point: z.string().min(2, {
+  source_address: z.string().min(2, {
     message: "Starting point must be at least 2 characters.",
   }),
-  destination: z.string().min(2, {
+  destination_address: z.string().min(2, {
     message: "Destination must be at least 2 characters.",
   }),
 });
@@ -32,28 +34,38 @@ export function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      starting_point: "",
-      destination: "",
+      source_address: "",
+      destination_address: "",
     },
   });
 
+  const [dataResponse, setDataResponse] = useState([]);
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
+    
+    console.log(data);
+    fetchResponce(data);
+    console.log(dataResponse);
+    return null
   }
+
+  const fetchResponce = async (data: any) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:3000/get_routes_coordinates?source_address=${data.source_address}&destination_address=${data.destination_address}`
+      );
+      setDataResponse(response.data);
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch disciplines:", error);
+    }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <FormField
           control={form.control}
-          name="starting_point"
+          name="source_address"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Starting Point</FormLabel>
@@ -75,7 +87,7 @@ export function InputForm() {
 
         <FormField
           control={form.control}
-          name="destination"
+          name="destination_address"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Destination</FormLabel>
